@@ -4,12 +4,12 @@ function OrderItem({ item, isLoadingIngredients, ingredients }) {
   const { quantity, name, totalPrice } = item;
 
   return (
-    <li>
+    <li className="py-3">
       <div>
         <p>
           <span>{quantity}&times;</span> {name}
         </p>
-        <p>{formatCurrency(totalPrice)}</p>
+        <p>{formatCurrency(totalPrice)} </p>
       </div>
     </li>
   );
