@@ -3,7 +3,7 @@ import CreateUser from "../Features/User/CreateUser";
 import Button from "./Button";
 
 function Home() {
-  const username = useSelector(state=> state.user.username)
+  const username = useSelector((state) => state.user.username);
 
   return (
     <div className="my-10 px-4 text-center sm:my-16">
@@ -14,7 +14,13 @@ function Home() {
           Straight out of the oven, straight to you.
         </span>
       </h1>
-     {!username ? <CreateUser /> : <Button to="/menu" type="primary">Continue ordering, {username}</Button>}
+      {!username ? (
+        <CreateUser />
+      ) : (
+        <Button to="/menu" type="primary">
+          Continue ordering {username}
+        </Button>
+      )}
     </div>
   );
 }
