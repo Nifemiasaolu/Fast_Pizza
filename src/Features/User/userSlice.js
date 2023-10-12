@@ -20,21 +20,21 @@
 //   return { position, address };
 // }
 
-import {createSlice} from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   username: "",
-}
+};
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducer: {
     updateName(state, action) {
-      state.username = action.payload
+      state.username = action.payload;
     },
   },
 });
 
-export const {updateName} = userSlice.actions;
+export const { updateName } = userSlice.actions;
 
-export default userSlice.reducer
+export default userSlice.reducer;
