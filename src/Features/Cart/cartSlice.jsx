@@ -17,10 +17,10 @@ const initialState = {
 const cartSlice = createSlice({
 name: "cart",
   initialState,
-  reducer: {
+  reducers: {
     addItem(state, action) {
       //payload == newItem
-      state.cart = state.cart.push(action.payload);
+     state.cart.push(action.payload);
     },
     deleteItem(state, action) {
       // payload == pizzaId
