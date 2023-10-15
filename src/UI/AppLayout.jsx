@@ -7,6 +7,7 @@ function AppLayout() {
   const navigation = useNavigation();
   // console.log(navigation);
   const isLoading = navigation.state === "loading";
+  //The state of navigation can be in "idle", "loading" & "submitting";
 
   return (
     <div className="grid h-screen grid-rows-[auto_1fr_auto]">
