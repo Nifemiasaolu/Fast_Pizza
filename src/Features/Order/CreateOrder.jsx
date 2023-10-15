@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { createOrder } from "../../Services/apiRestaurant";
 import Button from "../../UI/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearCart, getCart, getTotalCartPrice } from "../Cart/cartSlice";
 import EmptyCart from "../Cart/EmptyCart";
 import store from "../../store";
 import { formatCurrency } from "../../Utilities/helpers";
+import { fetchAddress } from "../User/userSlice";
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str) =>
@@ -43,7 +44,15 @@ function CreateOrder() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const formErrors = useActionData(); // Linking the action and the component together
-  const username = useSelector((state) => state.user.username);
+  const {
+    username,
+    position,
+    address,
+    status: addressStatus,
+  } = useSelector((state) => state.user);
+  const isLoadingAddress = addressStatus === "loading";
+
+  const dispatch = useDispatch();
 
   const cart = useSelector(getCart);
   const totalCartPrice = useSelector(getTotalCartPrice);
@@ -81,16 +90,33 @@ function CreateOrder() {
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
               className="input w-full"
               type="text"
+              disabled={isLoadingAddress}
               name="address"
+              defaultValue={address}
               required
             />
           </div>
+
+          {!position.latitude && !position.longitude && (
+            <span className="absolute bottom-[5px] right-[5px] z-50">
+              <Button
+                type="small"
+                disabled={isLoadingAddress}
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch(fetchAddress());
+                }}
+              >
+                Get Position
+              </Button>
+            </span>
+          )}
         </div>
 
         <div className="mb-12 flex items-center gap-5">
@@ -111,8 +137,10 @@ function CreateOrder() {
 
         <div>
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <Button disabled={isSubmitting} type="primary">
-            {isSubmitting ? "Placing order..." : `Order now from ${formatCurrency(totalPrice)}`}
+          <Button disabled={isSubmitting || isLoadingAddress} type="primary">
+            {isSubmitting
+              ? "Placing order..."
+              : `Order now from ${formatCurrency(totalPrice)}`}
           </Button>
         </div>
       </Form>
@@ -143,7 +171,7 @@ export async function action({ request }) {
   const newOrder = await createOrder(order);
 
   //Do NOT overUSE
-  store.dispatch(clearCart()); //Used to clear the cart overview in the order page. 
+  store.dispatch(clearCart()); //Used to clear the cart overview in the order page.
 
   return redirect(`/order/${newOrder.id}`);
 }
